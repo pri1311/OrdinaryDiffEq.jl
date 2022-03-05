@@ -18,10 +18,6 @@ function nlsolve!(nlsolver::AbstractNLSolver, integrator, cache=nothing, repeat_
     else
       γW = nlsolver.γ * integrator.dt / nlsolver.α
     end
-
-    # This is for numerical differentiation cache correctness
-    # Requires Newton methods are FSAL
-    nlsolver.cache.du1 .= integrator.fsalfirst
     update_W!(nlsolver, integrator, cache, γW, repeat_step)
   end
 

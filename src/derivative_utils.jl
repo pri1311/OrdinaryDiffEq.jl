@@ -138,6 +138,13 @@ function calc_J!(J, integrator, cache)
       f.jac(J, duprev, uprev, p, uf.α * uf.invγdt, t)
     else
       @unpack du1, uf, jac_config = cache
+
+      if isfsal(integrator.alg)
+        du1 .= integrator.fsalfirst
+      end
+      # Otherwise du1 is assumed to be correct
+      # i.e. Rosenbrock differntiation corrects it.
+
       # using `dz` as temporary array
       x = cache.dz
       fill!(x, zero(eltype(x)))
@@ -148,6 +155,12 @@ function calc_J!(J, integrator, cache)
       f.jac(J, uprev, p, t)
     else
       @unpack du1, uf, jac_config = cache
+
+      if isfsal(integrator.alg)
+        du1 .= integrator.fsalfirst
+      end
+      # Otherwise du1 is assumed to be correct
+      # i.e. Rosenbrock differntiation corrects it.
 
       uf.f = nlsolve_f(f, alg)
       uf.t = t
